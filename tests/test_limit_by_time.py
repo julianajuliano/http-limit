@@ -1,9 +1,9 @@
 from grappa import should
 
 from mock_redis_client import MockRedisClient
-from http_limit.limit_by_time import LimitByTime
+from flask_http_limit.limit_by_time_rule import LimitByTimeRule
 
-class TestLimitByTime():
+class TestLimitByTimeRule():
     
     def test_should_return_false_when_execution_count_exceeded(self):
         redis_client_mock = MockRedisClient()

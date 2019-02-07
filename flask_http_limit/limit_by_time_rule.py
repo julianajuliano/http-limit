@@ -1,5 +1,5 @@
 
-class LimitByTime():
+class LimitByTimeRule():
     def __init__(self, redis_client, time_limit, request_limit):
         self.redis_client = redis_client
         self.time_limit = time_limit

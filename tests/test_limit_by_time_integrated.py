@@ -1,9 +1,9 @@
 from grappa import should
 from redis import StrictRedis
 
-from http_limit.limit_by_time import LimitByTime
+from flask_http_limit.limit_by_time_rule import LimitByTimeRule
 
-class TestLimitByTimeIntegrated():
+class TestLimitByTimeRuleIntegrated():
     def setup_method(self):
         self.redis_client = StrictRedis(host='localhost', port=6379, db=0, decode_responses=True)
         self.redis_client.flushdb()
