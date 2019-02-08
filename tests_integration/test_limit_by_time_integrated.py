@@ -1,7 +1,7 @@
 from grappa import should
 from redis import StrictRedis
 
-from flask_http_limit.limit_by_time_rule import LimitByTimeRule
+from flask_http_limit import LimitByTimeRule
 
 class TestLimitByTimeRuleIntegrated():
     def setup_method(self):
@@ -9,7 +9,7 @@ class TestLimitByTimeRuleIntegrated():
         self.redis_client.flushdb()
     
     def test_should_return_false_when_execution_count_exceeded(self):
-        limit_by_time = LimitByTime(self.redis_client, 10, 3)
+        limit_by_time = LimitByTimeRule(self.redis_client, 10, 3)
         uid = "test1"
 
         limit_by_time.can_execute(uid) | should.be.true        
@@ -21,7 +21,7 @@ class TestLimitByTimeRuleIntegrated():
         
     
     def test_should_return_true_when_execution_count_not_exceeded(self):
-        limit_by_time = LimitByTime(self.redis_client, 10, 4)
+        limit_by_time = LimitByTimeRule(self.redis_client, 10, 4)
         uid = "test2"
 
         limit_by_time.can_execute(uid) | should.be.true

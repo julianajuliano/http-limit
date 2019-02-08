@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-
+from unittest.mock import MagicMock
 
 class MockRedisClient():
     def __init__(self):
@@ -22,3 +22,17 @@ class MockRedisClient():
     def incr(self, key):
         self.key_store[key] = self.key_store[key] + 1
         print(self.key_store[key])
+
+class MockRequest():
+    def __init__(self, ip, x_fowarded = []):
+        self.ip = ip
+        self.headers = MagicMock()
+
+        if len(x_fowarded) > 0:
+            self.headers.getlist.return_value = x_fowarded
+        else:
+            self.headers.getlist.return_value = None
+
+    @property
+    def remote_addr(self):
+        return self.ip

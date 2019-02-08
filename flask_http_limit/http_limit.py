@@ -1,4 +1,4 @@
-from flask import current_app
+from flask import current_app, request
 
 class HttpLimit():
     def __init__(self, app, limit_rule, uid_provider):        
@@ -10,7 +10,15 @@ class HttpLimit():
             self.init_app(app)
 
     def init_app(self, app):
-        pass
+        app.before_request(self.can_execute)
 
     def can_execute(self):
-        return self.limit_rule.can_execute(uid_provider.get_uid())
+        app = _get_app()
+        with app.get_context():
+            return self.limit_rule.can_execute(uid_provider.get_uid(request))
+
+    def _get_app(self):
+        if self.app:
+            return self.app
+
+        return current_app()

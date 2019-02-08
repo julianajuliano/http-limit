@@ -1,13 +1,13 @@
 from grappa import should
 
-from mock_redis_client import MockRedisClient
-from flask_http_limit.limit_by_time_rule import LimitByTimeRule
+from mocks import MockRedisClient
+from flask_http_limit import LimitByTimeRule
 
 class TestLimitByTimeRule():
     
     def test_should_return_false_when_execution_count_exceeded(self):
         redis_client_mock = MockRedisClient()
-        limit_by_time = LimitByTime(redis_client_mock, 10, 3)
+        limit_by_time = LimitByTimeRule(redis_client_mock, 10, 3)
         uid = "unittest1"
 
         limit_by_time.can_execute(uid) | should.be.true        
@@ -19,7 +19,7 @@ class TestLimitByTimeRule():
     
     def test_should_return_true_when_execution_count_not_exceeded(self):
         redis_client_mock = MockRedisClient()
-        limit_by_time = LimitByTime(redis_client_mock, 10, 4)
+        limit_by_time = LimitByTimeRule(redis_client_mock, 10, 4)
         uid = "unittest2"
 
         limit_by_time.can_execute(uid) | should.be.true        

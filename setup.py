@@ -1,4 +1,12 @@
+"""
+Flask-HttpLimit
+
+Adds request limiting feature to flask.
+
+"""
+
 from setuptools import setup
+from flask_http_limit import __version__
 
 requires = [
     "redis",
@@ -12,7 +20,7 @@ test_requires = [
 
 setup(
     name = "Flask-HttpLimit",
-    version = "0.0.0",
+    version = __version__,
     url = "https://github.com/julianajuliano/http-limit",
     author = "Juliana Juliano",
     author_email = "julianajuliano@gmail.com",
@@ -20,6 +28,9 @@ setup(
     packages=["flask_http_limit"],
     install_requires=requires,
     setup_requires="pytest-runner",
+    extras_require= {
+        "test": test_requires
+    },
     test_requires=test_requires,
     test_suit="pytest",  
     classifiers=[
