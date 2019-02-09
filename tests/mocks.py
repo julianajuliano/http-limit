@@ -1,6 +1,8 @@
 from datetime import datetime, timedelta
 from unittest.mock import MagicMock
 
+from flask_http_limit import HttpLimitError
+
 class MockRedisClient():
     def __init__(self):
         self.key_store = {}
@@ -23,6 +25,10 @@ class MockRedisClient():
         self.key_store[key] = self.key_store[key] + 1
         print(self.key_store[key])
 
+    def ttl(self, key):
+        time_delta = self.key_expires[key] - datetime.utcnow()
+        return int(time_delta.total_seconds())
+
 class MockRequest():
     def __init__(self, ip, x_fowarded = []):
         self.ip = ip
@@ -38,12 +44,15 @@ class MockRequest():
         return self.ip
 
 class MockRule():
-    def __init__(self):
-        self.can_execute_called = False
+    def __init__(self, should_execute, status_code=0):
+        self.should_execute = should_execute
+        self.status_code = status_code
+        self.apply_called = False
     
-    def can_execute(self, uid):
-        self.can_execute_called = True
-        return True
+    def apply(self, uid):
+        self.apply_called = True
+        if not self.should_execute:
+            raise HttpLimitError(self.status_code, "error")
 
 class MockUidProvider():
     def __init__(self):

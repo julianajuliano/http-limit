@@ -13,7 +13,9 @@ requires = [
 ]
 test_requires = [
     "pytest",
-    "grappa"    
+    "grappa" ,
+    "Flask-Testing",
+    "requests"
 ]
 
 setup(
