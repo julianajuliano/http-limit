@@ -6,13 +6,11 @@ Adds request limiting feature to flask.
 """
 
 from setuptools import setup
-from flask_http_limit import __version__
 
 requires = [
     "redis",
     "Flask"
 ]
-
 test_requires = [
     "pytest",
     "grappa"    
@@ -20,7 +18,7 @@ test_requires = [
 
 setup(
     name = "Flask-HttpLimit",
-    version = __version__,
+    version = "1.0.0",
     url = "https://github.com/julianajuliano/http-limit",
     author = "Juliana Juliano",
     author_email = "julianajuliano@gmail.com",

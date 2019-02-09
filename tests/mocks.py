@@ -36,3 +36,19 @@ class MockRequest():
     @property
     def remote_addr(self):
         return self.ip
+
+class MockRule():
+    def __init__(self):
+        self.can_execute_called = False
+    
+    def can_execute(self, uid):
+        self.can_execute_called = True
+        return True
+
+class MockUidProvider():
+    def __init__(self):
+        self.get_uid_called = False
+    
+    def get_uid(self, request):
+        self.get_uid_called = True
+        return "mock"
