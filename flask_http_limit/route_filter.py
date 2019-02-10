@@ -7,7 +7,7 @@ class RouteFilter():
     Methods:
         ignore
     """
-    def __init__(self, routes = None, logger=None):
+    def __init__(self, routes=None, logger=None):
         """
         Initialize filter
 

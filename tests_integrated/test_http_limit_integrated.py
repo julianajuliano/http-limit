@@ -17,7 +17,7 @@ from grappa import should
 from http import HTTPStatus
 from redis import StrictRedis
 
-from flask_http_limit import HttpLimit, LimitByTimeRule, IpUidProvider, IpFilter, RouteFilter
+from flask_http_limit import HttpLimit, LimitByTimeRule, IpUidProvider, IpFilter, IpResolver, RouteFilter
 
 class BaseHttpLimitIntegratedTest(LiveServerTestCase):
 
@@ -74,7 +74,8 @@ class TestHttpLimitIntegratedWithoutFilters(BaseHttpLimitIntegratedTest):
 
     def init_http_limit(self, app):
         limit_by_time_rule = LimitByTimeRule(self.redis_client, self.time_limit, self.request_limit, logger=self.logger)
-        ip_uid_provider = IpUidProvider(logger=self.logger)        
+        ip_resolver = IpResolver(logger=self.logger)
+        ip_uid_provider = IpUidProvider(ip_resolver, logger=self.logger)        
         http_limit = HttpLimit(app, ip_uid_provider, [limit_by_time_rule], logger=self.logger)
     
     def test_should_run_when_execution_count_not_exceeded(self):
@@ -106,8 +107,9 @@ class TestHttpLimitIntegratedWithIpFilter(BaseHttpLimitIntegratedTest):
 
     def init_http_limit(self, app):
         limit_by_time_rule = LimitByTimeRule(self.redis_client, self.time_limit, self.request_limit, logger=self.logger)
-        ip_uid_provider = IpUidProvider(logger=self.logger)        
-        filter = IpFilter(ips=["127.0.0.1"])
+        ip_resolver = IpResolver(logger=self.logger)
+        ip_uid_provider = IpUidProvider(ip_resolver, logger=self.logger)        
+        filter = IpFilter(ip_resolver, ips=["127.0.0.1"])
         http_limit = HttpLimit(app, ip_uid_provider, [limit_by_time_rule], filters=[filter], logger=self.logger)
 
     def test_should_ignore_rules_when_filters_match(self):
@@ -120,8 +122,9 @@ class TestHttpLimitIntegratedWithOneMatchingFilterOfTwo(BaseHttpLimitIntegratedT
 
     def init_http_limit(self, app):
         limit_by_time_rule = LimitByTimeRule(self.redis_client, self.time_limit, self.request_limit, logger=self.logger)
-        ip_uid_provider = IpUidProvider(logger=self.logger)        
-        ip_filter = IpFilter(ips=["127.0.0.1"])
+        ip_resolver = IpResolver(logger=self.logger)
+        ip_uid_provider = IpUidProvider(ip_resolver, logger=self.logger)        
+        ip_filter = IpFilter(ip_resolver, ips=["127.0.0.1"])
         route_filter = RouteFilter("test",logger=self.logger)
         http_limit = HttpLimit(app, ip_uid_provider, [limit_by_time_rule], filters=[ip_filter, route_filter], logger=self.logger)
 
@@ -135,7 +138,8 @@ class TestHttpLimitIntegratedWithRouteFilterForIndexRoute(BaseHttpLimitIntegrate
 
     def init_http_limit(self, app):        
         limit_by_time_rule = LimitByTimeRule(self.redis_client, self.time_limit, self.request_limit, logger=self.logger)
-        ip_uid_provider = IpUidProvider(logger=self.logger)        
+        ip_resolver = IpResolver(logger=self.logger)
+        ip_uid_provider = IpUidProvider(ip_resolver, logger=self.logger)        
         route_filter = RouteFilter("index", logger=self.logger)
         http_limit = HttpLimit(app, ip_uid_provider, [limit_by_time_rule], filters=[route_filter], logger=self.logger)
 
@@ -149,7 +153,8 @@ class TestHttpLimitIntegratedWithRouteFilterForTestRoute(BaseHttpLimitIntegrated
 
     def init_http_limit(self, app):
         limit_by_time_rule = LimitByTimeRule(self.redis_client, self.time_limit, self.request_limit, logger=self.logger)
-        ip_uid_provider = IpUidProvider(logger=self.logger)        
+        ip_resolver = IpResolver(logger=self.logger)
+        ip_uid_provider = IpUidProvider(ip_resolver, logger=self.logger)        
         route_filter = RouteFilter("test", logger=self.logger)
         http_limit = HttpLimit(app, ip_uid_provider, [limit_by_time_rule], filters=[route_filter], logger=self.logger)
 

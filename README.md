@@ -16,7 +16,7 @@ It has three main components: uid providers, rules and filters.
 
 ## Built-in UID Providers
 
-- **IPUidProvider**: the requester IP is the UID
+- **IPUidProvider**: the requester IP is the UID, it uses IpResolver to find the requester's IP
 - **RouteUidProvider**: it uses IPUidProvider to generate a uid that is composed of ip + route
 
 ## Built-in Rules
@@ -25,7 +25,7 @@ It has three main components: uid providers, rules and filters.
 
 ## Built-in Filters
 
-- **IpFilter**: filters requests based on a list of ips
+- **IpFilter**: filters requests based on a list of ips, it uses IpResolver to find the requester's IP
 - **RouteFilter**: filters requests based on a list of routes
 
 # Installation
@@ -60,14 +60,15 @@ You can also run *INSTALL-DEV.ps1* if you are running on Windows+Powershell
     self.time_limit = 3600 # request limit expires every hour
     self.request_limit = 100 # 100 requests per hour
     limit_by_time_rule = LimitByTimeRule(redis_client, self.time_limit, self.request_limit, logger=logger)
-    ip_uid_provider = IpUidProvider(logger=logger)
+    ip_resolver = IpResolver(logger=logger)
+    ip_uid_provider = IpUidProvider(ip_resolver, logger=logger)
     http_limit = HttpLimit(app, [limit_by_time_rule], ip_uid_provider, logger=logger)
 
 # Extending functionality
 It is possible to increment Flask-HttpLimit extension with your on rules. 
 
 ## Implementing a custom UID provider
-**UID** refers to the unique id of the request, it is based on this value that the limiting rule will be applied. You can create your own UID provider and pass it on to the HttpLimit extension.
+**UID** refers to the unique id of the request, it is based on this value that the limiting rule will be applied. You can create your own UID provider and pass it on to the HttpLimit extension. If you need to get the requester's ip, feel free to use the bult-in IpResolver. 
 
 ### UidProvider interface
 UidProvider requires a get_uid function that receives a parameter. The flask request context will be passed to get_uid so you can decide on how to calculate your UID. 

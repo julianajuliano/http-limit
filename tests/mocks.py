@@ -60,6 +60,15 @@ class MockRule():
         if not self.should_execute:
             raise HttpLimitError(self.status_code, "error")
 
+class MockIpResolver():
+    def __init__(self, ip):
+        self.get_ip_called = False
+        self.ip = ip
+    
+    def get_ip(self, request):
+        self.get_ip_called = True
+        return self.ip
+
 class MockUidProvider():
     def __init__(self, uid):
         self.get_uid_called = False

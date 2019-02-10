@@ -7,15 +7,15 @@ class RouteUidProvider():
     Methods:
         get_uid
     """
-    def __init__(self,ip_uid_provider, logger=None):
+    def __init__(self, ip_resolver, logger=None):
         """
         Initialize provider
 
         Arguments:
-            ip_uid_provider = instance of IpUidProvider
+            ip_resolver = instance of IpResolver
             logger: logger instance of python's standard logging library
         """
-        self.ip_uid_provider = ip_uid_provider
+        self.ip_resolver = ip_resolver
         self.logger = logger or logging.getLogger(__name__)
     
     def get_uid(self, request):
@@ -27,7 +27,7 @@ class RouteUidProvider():
         """
         self.logger.debug("get_uid called")
 
-        ip = self.ip_uid_provider.get_uid(request)
+        ip = self.ip_resolver.get_ip(request)
         
         route = request.url_rule.endpoint
 

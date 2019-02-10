@@ -7,13 +7,15 @@ class IpUidProvider():
     Methods:
         get_uid
     """
-    def __init__(self,logger=None):
+    def __init__(self, ip_resolver, logger=None):
         """
         Initialize provider
 
-        Arguments:            
+        Arguments:
+            ip_resolver: instance of IpResolver
             logger: logger instance of python's standard logging library
         """
+        self.ip_resolver = ip_resolver
         self.logger = logger or logging.getLogger(__name__)
     
     def get_uid(self, request):
@@ -25,15 +27,7 @@ class IpUidProvider():
         """
         self.logger.debug("get_uid called")
 
-        x_fowarded = request.headers.getlist("X-Forwarded-For")
-        self.logger.debug("X-Forwarded-For: {x_fowarded}".format(x_fowarded=x_fowarded))
-
-        self.logger.debug("remote_addr: {remote_addr}".format(remote_addr=request.remote_addr))
-
-        if x_fowarded:
-         ip = x_fowarded[0]
-        else:
-            ip = request.remote_addr
+        ip = self.ip_resolver.get_ip(request)
         
         self.logger.debug("get_uid finished with result: {ip}".format(ip=ip))
         return ip
