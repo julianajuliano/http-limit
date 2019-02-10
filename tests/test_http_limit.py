@@ -1,3 +1,7 @@
+"""
+Unit tests for HttpLimit extension
+"""
+
 from flask import Flask
 from flask.json import jsonify
 from grappa import should

@@ -1,6 +1,16 @@
+"""
+Integration tests for Limit by Time Rule.
+
+Runs over a real redis service.
+
+Requires:
+A running redis instance on localhost por 6379.
+"""
+
 import pytest
 import re
 import time
+import multiprocessing
 from grappa import should
 from http import HTTPStatus
 from redis import StrictRedis
@@ -15,12 +25,13 @@ class TestLimitByTimeRuleIntegrated():
     
     def test_should_raise_HttpLimitError_when_execution_count_exceeded(self):
         time_limit = 10
-        limit_by_time = LimitByTimeRule(self.redis_client, time_limit, 3)
+        request_limit = 3
+        limit_by_time = LimitByTimeRule(self.redis_client, time_limit, request_limit)
         uid = "test1"
 
-        limit_by_time.apply(uid)
-        limit_by_time.apply(uid)
-        limit_by_time.apply(uid)
+        for i in range(0, request_limit):
+            limit_by_time.apply(uid)
+        
         #sleep for 1 second
         time.sleep(1) 
         
@@ -37,17 +48,19 @@ class TestLimitByTimeRuleIntegrated():
         ttl_integer | should.be.equal.to(time_limit - 1)
         
     def test_should_run_when_execution_count_not_exceeded(self):
-        limit_by_time = LimitByTimeRule(self.redis_client, 10, 4)
+        time_limit = 10
+        request_limit = 4
+        limit_by_time = LimitByTimeRule(self.redis_client, time_limit, request_limit)
         uid = "test2"
 
-        limit_by_time.apply(uid)
-        limit_by_time.apply(uid)
-        limit_by_time.apply(uid)
-        limit_by_time.apply(uid)
+        for i in range(0, request_limit):
+            limit_by_time.apply(uid)        
 
     def test_should_raise_HttpLimitError_when_redis_is_not_available(self):
-        limit_by_time = LimitByTimeRule(self.unavailable_redis_client, 10, 4, fail_on_connection_error=True)
-        uid = "test4"
+        time_limit = 10
+        request_limit = 4
+        limit_by_time = LimitByTimeRule(self.unavailable_redis_client, time_limit, request_limit, fail_on_connection_error=True)
+        uid = "test3"
 
         with pytest.raises(HttpLimitError) as exinfo:
             limit_by_time.apply(uid)
@@ -56,8 +69,11 @@ class TestLimitByTimeRuleIntegrated():
         exception.status_code | should.be.equal.to(HTTPStatus.INTERNAL_SERVER_ERROR)
         exception.message | should.match("Error calculating rate limit.")
 
-    def test_should_run_when_configured_to_run_and_redis_is_not_available(self):        
-        limit_by_time = LimitByTimeRule(self.unavailable_redis_client, 10, 4, fail_on_connection_error=False)
-        uid = "test3"
+    def test_should_run_when_configured_to_run_and_redis_is_not_available(self):
+        time_limit = 10
+        request_limit = 4
+        limit_by_time = LimitByTimeRule(self.unavailable_redis_client, time_limit, request_limit, fail_on_connection_error=False)
+        uid = "test4"
 
         limit_by_time.apply(uid)
+    

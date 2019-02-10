@@ -1,3 +1,7 @@
+"""
+Unit tests for TestIpProvider
+"""
+
 from grappa import should
 from flask_http_limit import IpUidProvider
 from mocks import MockRequest

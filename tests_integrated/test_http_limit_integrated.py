@@ -1,6 +1,16 @@
+"""
+Integration tests for HttpLimit extension. 
+
+Runs a flask app on a local server with the HttpLimit extesion plugged.
+
+Requires:
+A running redis instance on localhost por 6379.
+"""
 import pytest
+import logging
 import requests
 import time
+import sys
 from flask_testing import LiveServerTestCase
 from flask import Flask
 from grappa import should
@@ -19,18 +29,33 @@ class TestHttpLimitIntegrated(LiveServerTestCase):
 
         app.add_url_rule("/", view_func=self._view)
 
+        logger = self._get_logger()
+
         redis_client = StrictRedis(host='localhost', port=6379, db=0, decode_responses=True)
         redis_client.flushdb()
         self.time_limit = 30
         self.request_limit = 3
-        limit_by_time_rule = LimitByTimeRule(redis_client, self.time_limit, self.request_limit)
-        ip_uid_provider = IpUidProvider()
-        http_limit = HttpLimit(app, [limit_by_time_rule], ip_uid_provider)
+        limit_by_time_rule = LimitByTimeRule(redis_client, self.time_limit, self.request_limit, logger=logger)
+        ip_uid_provider = IpUidProvider(logger=logger)
+        http_limit = HttpLimit(app, [limit_by_time_rule], ip_uid_provider, logger=logger)
 
         return app   
 
     def _view(self):
         return "test", HTTPStatus.OK
+
+    def _get_logger(self):
+        logging.basicConfig(level=logging.DEBUG)
+        logger = logging.getLogger(__name__)
+
+        handler = logging.StreamHandler(sys.stdout)
+        handler.setLevel(logging.DEBUG)
+        formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+        handler.setFormatter(formatter)
+
+        logger.addHandler(handler)
+
+        return logger
 
     def test_should_run_when_execution_count_not_exceeded(self):
 

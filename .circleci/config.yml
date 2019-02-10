@@ -28,6 +28,6 @@ jobs: # A basic unit of work in a run
       - run:
           command: |
             . env/bin/activate
-            pytest tests --disable-warnings #runs unit tests first
-            pytest tests_integrated --disable-warnings #run integrated tests after
+            pytest tests --disable-warnings --log-level DEBUG #runs unit tests first
+            pytest tests_integrated --disable-warnings --log-level DEBUG #run integrated tests after
       

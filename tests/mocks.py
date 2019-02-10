@@ -1,3 +1,6 @@
+"""
+Mock clases to be used in unit testing.
+"""
 from datetime import datetime, timedelta
 from unittest.mock import MagicMock
 

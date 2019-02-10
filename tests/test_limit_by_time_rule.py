@@ -1,3 +1,7 @@
+"""
+Unit tests for LimitByTime rule
+"""
+
 import pytest
 from grappa import should
 from http import HTTPStatus
@@ -5,8 +9,6 @@ from http import HTTPStatus
 from mocks import MockRedisClient
 from flask_http_limit import LimitByTimeRule, HttpLimitError
 import flask_http_limit.http_limit
-
-
 
 class TestLimitByTimeRule():
     
@@ -27,7 +29,6 @@ class TestLimitByTimeRule():
         exception = exinfo.value
         exception.status_code | should.be.equal.to(HTTPStatus.TOO_MANY_REQUESTS)
         exception.message | should.match("Rate limit exceeded. Try again in \d+ seconds.")
-
     
     def test_should_run_when_execution_count_not_exceeded(self):
         redis_client_mock = MockRedisClient()
