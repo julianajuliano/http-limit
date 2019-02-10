@@ -6,10 +6,27 @@ Http limit flask extension for python
 # Introduction
 Flask-HttpLimit lets you easily plugin request limiting rules to your [Flask](http://flask.pocoo.org/) apps.
 
-## Requirements
-Python 3.7+
+It has three main components: uid providers, rules and filters. 
 
-# TO-DO DOCUMENT WHAT IS SHIPPED
+1. **UID Providers** are responsible for generating a unique id to be used by the rule.
+
+2. **Rules** rules decide if the request has reached its limit. You can have a collection of rules to apply to your requests.
+
+3. **Filters** enable for filtering some specific requests so they will be ignored and the rules will not apply to them. You can use more than one filter, if one match, the request will be ignored
+
+## Built-in UID Providers
+
+- **IPUidProvider**: the requester IP is the UID
+- **RouteUidProvider**: it uses IPUidProvider to generate a uid that is composed of ip + route
+
+## Built-in Rules
+
+- **LimitByTime**: limits the amount of requests that can be executed for a period of time
+
+## Built-in Filters
+
+- **IpFilter**: filters requests based on a list of ips
+- **RouteFilter**: filters requests based on a list of routes
 
 # Installation
 This extension is not availabile in a pip package, so clone the repository and run the following commands:
@@ -19,6 +36,9 @@ This extension is not availabile in a pip package, so clone the repository and r
     python -m venv env
     .\env\scripts\activate.ps1 (Windows) | .\env\bin\activate (Linux)
     python setup.py install
+
+## Requirements
+Python 3.7+
 
 
 # Installation-Dev
@@ -46,22 +66,30 @@ You can also run *INSTALL-DEV.ps1* if you are running on Windows+Powershell
 # Extending functionality
 It is possible to increment Flask-HttpLimit extension with your on rules. 
 
-## Implementing a different UID provider
+## Implementing a custom UID provider
 **UID** refers to the unique id of the request, it is based on this value that the limiting rule will be applied. You can create your own UID provider and pass it on to the HttpLimit extension.
 
 ### UidProvider interface
 UidProvider requires a get_uid function that receives a parameter. The flask request context will be passed to get_uid so you can decide on how to calculate your UID. 
 
-    get_uid(request):
+    get_uid(request)
 
-## Implementing a different Rule
+## Implementing a custom Rule
 Flask-HttpLimit extension can deal with more than one rule at time. It receives an array of rules and applies them in order. You can write your own rule that adds functionality to the built-in rule or you can create one from scratch and use only your custom rule.
 
 ### Rule Interface
 Rule requires an apply function that receives the uid. If the limit has been reached you need to raise an HttpLimitError passing the HttpStatus code you want to return to flask and an error message.
 
-    apply(uid); 
+    apply(uid)
     raises HttpLimitError
+
+## Implementing a custom Filter
+Flask-HttpLimit can execute a list of filters for each request received. It receives and arry of filters and calls them in order. You can create your own filter or use the built-in ones
+
+### Filter Interface
+Filter requires a ignore function that receives the request context from flask. It should return **True** if the request should be ignored.
+
+    ignore(request)
 
 # Logging
 This extension uses python's standard logging library, it emits DEBUG and ERROR level messages. For more info on how to configure your application for logging visit [official documentation](https://docs.python.org/3/library/logging.html)
