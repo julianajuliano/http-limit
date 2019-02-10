@@ -1,5 +1,6 @@
 # Flask-HttpLimit
 Http limit flask extension for python 
+
 ![CircleCI](https://circleci.com/gh/julianajuliano/http-limit/tree/master.svg?style=svg)](https://circleci.com/gh/julianajuliano/http-limit/tree/master)
 
 # Introduction
@@ -25,22 +26,22 @@ For dev and testing purposes, run the following after running install
 
     pip install -e ".[test]"
 
-You can also run INSTALL-DEV.ps1 if you are running on Windows+Powershell
+You can also run *INSTALL-DEV.ps1* if you are running on Windows+Powershell
 
 # Example
 
-   app = Flask("myapp")
+    app = Flask("myapp")
    
-   logging.basicConfig(level=logging.DEBUG)
-   logger = logging.getLogger(__name__)
+    logging.basicConfig(level=logging.DEBUG)
+    logger = logging.getLogger(__name__)
 
-   redis_client = StrictRedis(host='localhost', port=6379, db=0, decode_responses=True)
+    redis_client = StrictRedis(host='localhost', port=6379, db=0, decode_responses=True)
    
-   self.time_limit = 3600 # request limit expires every hour
-   self.request_limit = 100 # 100 requests per hour
-   limit_by_time_rule = LimitByTimeRule(redis_client, self.time_limit, self.request_limit, logger=logger)
-   ip_uid_provider = IpUidProvider(logger=logger)
-   http_limit = HttpLimit(app, [limit_by_time_rule], ip_uid_provider, logger=logger)
+    self.time_limit = 3600 # request limit expires every hour
+    self.request_limit = 100 # 100 requests per hour
+    limit_by_time_rule = LimitByTimeRule(redis_client, self.time_limit, self.request_limit, logger=logger)
+    ip_uid_provider = IpUidProvider(logger=logger)
+    http_limit = HttpLimit(app, [limit_by_time_rule], ip_uid_provider, logger=logger)
 
 # Extending functionality
 It is possible to increment Flask-HttpLimit extension with your on rules. 
@@ -51,7 +52,7 @@ It is possible to increment Flask-HttpLimit extension with your on rules.
 ### UidProvider interface
 UidProvider requires a get_uid function that receives a parameter. The flask request context will be passed to get_uid so you can decide on how to calculate your UID. 
 
-   get_uid(request):
+    get_uid(request):
 
 ## Implementing a different Rule
 Flask-HttpLimit extension can deal with more than one rule at time. It receives an array of rules and applies them in order. You can write your own rule that adds functionality to the built-in rule or you can create one from scratch and use only your custom rule.
