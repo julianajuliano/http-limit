@@ -2,7 +2,7 @@
 Mock clases to be used in unit testing.
 """
 from datetime import datetime, timedelta
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, PropertyMock
 
 from flask_http_limit import HttpLimitError
 
@@ -33,14 +33,17 @@ class MockRedisClient():
         return int(time_delta.total_seconds())
 
 class MockRequest():
-    def __init__(self, ip, x_fowarded = []):
+    def __init__(self, ip, x_fowarded = [], route = None):
         self.ip = ip
+        
         self.headers = MagicMock()
-
         if len(x_fowarded) > 0:
             self.headers.getlist.return_value = x_fowarded
         else:
             self.headers.getlist.return_value = None
+
+        self.url_rule = MagicMock()        
+        self.url_rule.endpoint = route
 
     @property
     def remote_addr(self):
@@ -58,9 +61,10 @@ class MockRule():
             raise HttpLimitError(self.status_code, "error")
 
 class MockUidProvider():
-    def __init__(self):
+    def __init__(self, uid):
         self.get_uid_called = False
+        self.uid = uid
     
     def get_uid(self, request):
         self.get_uid_called = True
-        return "mock"
+        return self.uid

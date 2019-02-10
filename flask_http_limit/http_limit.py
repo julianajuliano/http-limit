@@ -7,14 +7,14 @@ class HttpLimit():
     Methods:
         init_app
     """
-    def __init__(self, app, rules, uid_provider, logger=None):
+    def __init__(self, app, uid_provider, rules, logger=None):
         """
         Initialize extension.
         
         Arguments:
             app: flask application object
-            rules: array of rules to be applied
             uid_provider: unique id provider
+            rules: array of rules to be applied            
             logger: logger instance of python's standard logging library
         """
         self.app = app

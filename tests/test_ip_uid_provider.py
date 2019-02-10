@@ -1,5 +1,5 @@
 """
-Unit tests for TestIpProvider
+Unit tests for IpUidProvider
 """
 
 from grappa import should

@@ -37,7 +37,7 @@ class TestHttpLimitIntegrated(LiveServerTestCase):
         self.request_limit = 3
         limit_by_time_rule = LimitByTimeRule(redis_client, self.time_limit, self.request_limit, logger=logger)
         ip_uid_provider = IpUidProvider(logger=logger)
-        http_limit = HttpLimit(app, [limit_by_time_rule], ip_uid_provider, logger=logger)
+        http_limit = HttpLimit(app, ip_uid_provider, [limit_by_time_rule], logger=logger)
 
         return app   
 

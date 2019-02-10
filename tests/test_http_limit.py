@@ -19,9 +19,9 @@ class TestHttpLimit():
         return "test", HTTPStatus.OK
 
     def test_should_execute_before_every_request_when_app_in_constructor(self):
-        mock_rule = MockRule(should_execute=True)
-        mock_uid_provider = MockUidProvider()
-        HttpLimit(self.app, [mock_rule], mock_uid_provider)
+        mock_uid_provider = MockUidProvider(uid="mock")
+        mock_rule = MockRule(should_execute=True)        
+        HttpLimit(self.app, mock_uid_provider, [mock_rule])
 
         client = self.app.test_client()
         response = client.get("/")
@@ -31,9 +31,9 @@ class TestHttpLimit():
         mock_uid_provider.get_uid_called | should.be.true
 
     def test_should_execute_before_every_request_when_initializes_app(self):
-        mock_rule = MockRule(should_execute=True)
-        mock_uid_provider = MockUidProvider()
-        http_limit = HttpLimit(None, [mock_rule], mock_uid_provider)
+        mock_uid_provider = MockUidProvider(uid="mock")
+        mock_rule = MockRule(should_execute=True)        
+        http_limit = HttpLimit(None, mock_uid_provider, [mock_rule])
         http_limit.init_app(self.app)
 
         client = self.app.test_client()
@@ -45,9 +45,9 @@ class TestHttpLimit():
 
     def test_should_return_status_code_when_limit_exceded(self):
         status_code = 400
-        mock_rule = MockRule(should_execute=False, status_code=status_code)
-        mock_uid_provider = MockUidProvider()
-        http_limit = HttpLimit(None, [mock_rule], mock_uid_provider)
+        mock_uid_provider = MockUidProvider(uid="mock")
+        mock_rule = MockRule(should_execute=False, status_code=status_code)        
+        http_limit = HttpLimit(None, mock_uid_provider, [mock_rule])
         http_limit.init_app(self.app)
 
         client = self.app.test_client()
