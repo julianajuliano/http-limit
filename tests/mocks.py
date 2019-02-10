@@ -33,7 +33,7 @@ class MockRedisClient():
         return int(time_delta.total_seconds())
 
 class MockRequest():
-    def __init__(self, ip, x_fowarded = [], route = None):
+    def __init__(self, ip = None, x_fowarded = [], route = None):
         self.ip = ip
         
         self.headers = MagicMock()
@@ -68,3 +68,12 @@ class MockUidProvider():
     def get_uid(self, request):
         self.get_uid_called = True
         return self.uid
+
+class MockFilter():
+    def __init__(self, ignore):
+        self.ignore_called = False
+        self.ignore_result = ignore
+    
+    def ignore(self, request):
+        self.ignore_called = True
+        return self.ignore_result
