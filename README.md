@@ -1,7 +1,7 @@
 # Flask-HttpLimit
 Http limit flask extension for python 
 
-![CircleCI](https://circleci.com/gh/julianajuliano/http-limit/tree/master.svg?style=svg)
+[![CircleCI](https://circleci.com/gh/julianajuliano/http-limit.svg?style=svg)](https://circleci.com/gh/julianajuliano/http-limit)
 
 # Introduction
 Flask-HttpLimit lets you easily plugin request limiting rules to your [Flask](http://flask.pocoo.org/) apps.
