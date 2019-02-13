@@ -17,7 +17,7 @@ It has three main components: uid providers, rules and filters.
 ## Built-in UID Providers
 
 - **IPUidProvider**: the requester IP is the UID, it uses IpResolver to find the requester's IP
-- **RouteUidProvider**: it uses IPUidProvider to generate a uid that is composed of ip + route
+- **RouteUidProvider**: it uses IpResolver to generate a uid that is composed of ip + route
 
 ## Built-in Rules
 
